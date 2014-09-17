@@ -1,0 +1,14 @@
+- name: create primary group
+  group: name={{ primary_group }}
+
+- name: create user(s)
+  user: 
+    name={{ user }}
+    group={{ primary_group }}
+    groups={{ additional_groups }}
+    shell=/bin/bash
+
+- name: setup authorized key(s)
+  authorized_key:
+    user={{ user }}
+    key="{{ lookup('file', '/home/mike/.ssh/id_rsa.pub') }}"
