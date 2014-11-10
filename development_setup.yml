@@ -1,5 +1,5 @@
 - hosts: all
-  sudo: yes
+  sudo: no
   #vars_files:
     #- vars/defaults.yml
   vars:
@@ -12,6 +12,7 @@
         dest="/etc/sudoers"
         regexp="^%wheel"
         line="%wheel ALL=(ALL:ALL) ALL"
+      sudo: yes
 
     - { include: tasks/create_user.yml user=mike primary_group=mike additional_groups=wheel }
 
@@ -30,6 +31,7 @@
         upgrade=safe
         update_cache=yes
         cache_valid_time=86400
+      sudo: yes
 
     - name: Install git,tmux,irssi,cpanminus
       apt:
@@ -50,11 +52,14 @@
         line="{{item.line}}"
         create=yes
       with_items:
-        - {host: "github.com", line: 
-"github.com,192.30.252.128 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=="}
+        - {host: "github.com", line: "github.com,ssh.github.com,192.30.252.*,192.30.253.*,192.30.254.*,192.30.255.* ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=="}
         - {host: "bitbucket.com", line: "bitbucket.org,131.103.20.167 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw=="}
+      sudo: yes
+      notify:
+        - set file owner
+
     - name: Check for dotfile changes
-      git: repo=git@github.com:Kusold/dotfiles.git dest=/home/{{ ansible_env.USER }}/dotfiles
+      git: repo=git@github.com:Kusold/dotfiles.git dest=/home/{{ ansible_ssh_user }}/dotfiles
       #notify:
       #  - change to dotfile dir
       #  - generate symlinks
@@ -72,3 +77,10 @@
 
     - name: change dir to home
       command: cd /home/mike
+
+    - name: set file owner
+      file:
+        path=/home/{{ansible_ssh_user}}/.ssh/known_hosts
+        owner={{ansible_ssh_user}}
+        group={{ansible_ssh_user}}
+        mode=644
