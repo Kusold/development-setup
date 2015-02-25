@@ -7,7 +7,7 @@
     # - { include: tasks/setup_sudo.yml }
     # - { include: tasks/create_user.yml user=mike primary_group=mike additional_groups=wheel }
 
-    - name: Install git,tmux,irssi,cpanminus
+    - name: Install commonly used utilities
       yum: name={{ item.name }} state=latest
       with_items:
         - name: zsh
@@ -16,6 +16,7 @@
         - name: git
         - name: tmux
         - name: irssi
+        - name: unzip
         #-  name: 'cpanminus'
       sudo: yes
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
@@ -28,7 +29,7 @@
       sudo: yes
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-    - name: Install git,tmux,irssi,cpanminus
+    - name: Install commonly used utilities
       apt:
         pkg={{ item.name }}
         state=latest
@@ -39,6 +40,7 @@
         - name: git
         - name: tmux
         - name: irssi
+        - name: unzip
         #-  name: 'cpanminus'
       sudo: yes
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
