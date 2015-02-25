@@ -6,8 +6,9 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/trusty32"
-  config.vm.box_url = "Vagrantfile"
+  config.ssh.forward_agent = true
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "development_setup.yml"
+    ansible.raw_ssh_args = ["-o UserKnownHostsFile=/dev/null"]
   end
 end
