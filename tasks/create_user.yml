@@ -1,5 +1,6 @@
 - name: create primary group
   group: name={{ primary_group }}
+  sudo: yes
 
 - name: create user(s)
   user: 
@@ -7,8 +8,10 @@
     group={{ primary_group }}
     groups={{ additional_groups }}
     shell=/bin/bash
+  sudo: yes
 
 - name: setup authorized key(s)
   authorized_key:
     user={{ user }}
     key="{{ lookup('file', '/home/mike/.ssh/id_rsa.pub') }}"
+  sudo: yes

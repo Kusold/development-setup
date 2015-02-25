@@ -1,0 +1,10 @@
+- name: Create Wheel Group
+  group: name=wheel
+  sudo: yes
+
+- name: Grant sudo access to group wheel
+  lineinfile:
+    dest="/etc/sudoers"
+    regexp="^%wheel"
+    line="%wheel ALL=(ALL:ALL) ALL"
+  sudo: yes
