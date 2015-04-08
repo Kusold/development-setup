@@ -1,0 +1,41 @@
+---
+galaxy_info:
+  author: "Mike Kusold"
+  description: "Ansible role that installs node (http://nodejs.org/). The latest stable release that has been compiled for x86 64-bit Linux systems is installed by default, and different platforms and versions are supported by modifying the role variables.
+  Very heavily copy and pasted from: https://github.com/jlund/ansible-go/"
+  license: MIT
+  min_ansible_version: 1.3
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: GenericUNIX
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: opensuse
+      versions:
+        - all
+    - name: GenericBSD
+      versions:
+        - all
+    - name: FreeBSD
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: SLES
+      versions:
+        - all
+    - name: GenericLinux
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  catenoderies:
+    - development
+dependencies: []

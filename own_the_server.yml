@@ -1,0 +1,19 @@
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: Set user shell to zsh
+      user:
+        name={{ ansible_ssh_user }}
+        shell=/bin/zsh
+
+    - name: Fetch jq for ansiweather
+      get_url:
+        dest=/home/{{ ansible_ssh_user }}/bin
+        url=https://stedolan.github.io/jq/download/linux64/jq
+        mode=770
+      sudo: no
+
+  roles:
+    - { role: development_setup }
+    - { role: golang, go_installation_path: "/home/{{ ansible_ssh_user }}/lib/", go_path: "/home/{{ ansible_ssh_user }}/Development/go", sudo: no, symlink_bin: yes, symlink_dest: "/home/{{ ansible_ssh_user }}/bin" }
+    - { role: node_js, node_installation_path: "/home/{{ ansible_ssh_user }}/lib/", sudo: no, symlink_bin: yes, symlink_dest: "/home/{{ ansible_ssh_user }}/bin" }

@@ -1,0 +1,11 @@
+---
+node_version: 0.12.0
+arch: linux-x64
+node_installation_path: /usr/local/src/
+node_folder_name: "node-v{{node_version}}-{{arch}}"
+node_tarball: "{{ node_folder_name }}.tar.gz"
+node_tarball_checksum: "64fb5260a4a0f914b62a80066d7955856a04703a"
+node_version_target: "v{{node_version}}"
+sudo: yes
+symlink_bin: no
+symlink_dest: /tmp/

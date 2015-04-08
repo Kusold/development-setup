@@ -1,0 +1,2 @@
+---
+node_download_location: "http://nodejs.org/dist/v{{ node_version }}/{{ node_tarball }}"

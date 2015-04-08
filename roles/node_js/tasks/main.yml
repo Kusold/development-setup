@@ -1,0 +1,35 @@
+---
+- name: Download the node tarball
+  get_url: url={{ node_download_location }}
+           dest=/tmp/{{ node_tarball }}
+  sudo: "{{ sudo }}"
+
+- name: Register the current node version (if any)
+  command: "{{ node_installation_path }}{{ node_folder_name }}/bin/node --version"
+  ignore_errors: yes
+  register: current_node_version
+  sudo: "{{ sudo }}"
+
+- name: Extract the node tarball if node is not yet installed or if it is not the desired version
+  command: tar -C {{ node_installation_path }} -xf /tmp/{{ node_tarball }}
+  when: current_node_version|failed or current_node_version.stdout != node_version_target
+  sudo: "{{ sudo }}"
+
+- name: Symlink bin
+  file:
+    state=link
+    src="{{ node_installation_path }}{{ node_folder_name }}/bin/{{ item }}"
+    dest="{{ symlink_dest }}/{{ item }}"
+    force=yes
+  with_items:
+    - node
+    - npm
+  sudo: "{{ sudo }}"
+  when: symlink_bin
+
+# - name: Add the node bin directory to the PATH environment variable for all users
+#   copy: src=node-bin.sh
+#         dest=/etc/profile.d
+# - name: Set nodePATH for all users
+#   template: src=node-path.sh.j2
+#             dest=/etc/profile.d/node-path.sh

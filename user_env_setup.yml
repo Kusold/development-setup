@@ -1,0 +1,34 @@
+- hosts: all
+  sudo: no
+  #vars_files:
+    #- vars/defaults.yml
+  vars:
+  tasks:
+    # - { include: tasks/setup_sudo.yml }
+    # - { include: tasks/create_user.yml user=mike primary_group=mike additional_groups=wheel }
+
+    - name: Check for dotfile changes
+      git:
+        repo=git@github.com:Kusold/dotfiles.git
+        dest=/home/{{ ansible_ssh_user }}/dotfiles
+        accept_hostkey=yes
+      notify:
+        - generate symlinks
+
+    - name: Setup user's bin
+      file: path=/home/{{ ansible_ssh_user }}/bin state=directory
+
+      # may need to run "sudo cpanm install Bundle::LWP" && "sudo cpanm install Lingua::Ispell" for scriptassist
+    #- include: tasks/install_nodejs.yml
+
+  handlers:
+    - name: generate symlinks
+      shell: bash /home/{{ ansible_ssh_user }}/dotfiles/symlink-files.sh
+
+    # - name: set file owner
+    #   file:
+    #     path=/home/{{ansible_ssh_user}}/.ssh/known_hosts
+    #     owner={{ansible_ssh_user}}
+    #     group={{ansible_ssh_user}}
+    #     mode=644
+    #   sudo: yes

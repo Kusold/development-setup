@@ -1,0 +1,40 @@
+---
+- name: Install commonly used utilities
+  yum: name={{ item.name }} state=latest
+  with_items:
+    - name: zsh
+    - name: wget
+    - name: curl
+    - name: git
+    - name: tmux
+    - name: irssi
+    - name: unzip
+    - name: vim
+    #-  name: 'cpanminus'
+  sudo: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Install Security Upgrades for Debian
+  apt:
+    upgrade=safe
+    update_cache=yes
+    cache_valid_time=86400
+  sudo: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install commonly used utilities
+  apt:
+    pkg={{ item.name }}
+    state=latest
+  with_items:
+    - name: zsh
+    - name: wget
+    - name: curl
+    - name: git
+    - name: tmux
+    - name: irssi
+    - name: unzip
+    - name: vim
+    #-  name: 'cpanminus'
+  sudo: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

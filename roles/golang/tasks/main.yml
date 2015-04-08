@@ -1,0 +1,45 @@
+---
+- name: Download the Go tarball
+  get_url: url={{ go_download_location }}
+           dest=/tmp/{{ go_tarball }}
+  sudo: "{{ sudo }}"
+
+- name: Register the current Go version (if any)
+  shell: "export GOROOT={{ go_installation_path }}go; {{ go_installation_path }}go/bin/go version"
+  ignore_errors: yes
+  register: current_go_version
+  sudo: "{{ sudo }}"
+
+- name: Extract the Go tarball if Go is not yet installed or if it is not the desired version
+  command: tar -C {{ go_installation_path }} -xf /tmp/{{ go_tarball }}
+  when: current_go_version|failed or current_go_version.stdout != go_version_target
+  sudo: "{{ sudo }}"
+
+- name: Symlink bin
+  file:
+    state=link
+    src="{{ go_installation_path }}go/bin/{{ item }}"
+    dest="{{ symlink_dest }}/{{ item }}"
+    force=yes
+  with_items:
+    - go
+    - godoc
+    - gofmt
+  sudo: "{{ sudo }}"
+  when: symlink_bin
+
+# - name: Add the Go bin directory to the PATH environment variable for all users
+#   copy: src=go-bin.sh
+#         dest=/etc/profile.d
+# - name: Set GOPATH for all users
+#   template: src=go-path.sh.j2
+#             dest=/etc/profile.d/go-path.sh
+
+- name: create base go path directory structure
+  file: path={{ go_path }}/{{item}}
+        state=directory
+  with_items:
+    - src
+    - bin
+    - lib
+  sudo: "{{ sudo }}"

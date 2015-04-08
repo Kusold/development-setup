@@ -1,0 +1,11 @@
+---
+- include: install_update_packages.yml
+
+- name: setup local installation paths
+  file: path=/home/{{ ansible_ssh_user }}/{{item}}
+        state=directory
+  with_items:
+    - bin
+    - lib
+    - src
+  sudo: no
